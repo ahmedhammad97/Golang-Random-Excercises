@@ -24,6 +24,37 @@ document.querySelector("#leap_submit").addEventListener('click', e => {
   }).catch(err => {console.log(err)});
 })
 
+document.querySelector("#lived_submit").addEventListener('click', e => {
+  var time = document.querySelector(".lived_div input").value + ":04Z";
+  sendRequest("/lived", {"time" : time}).then(result => {
+    document.querySelector(".lived_div .result").innerText = result.slice(0, result.length - 9);
+  }).catch(err => {console.log(err)});
+})
+
+document.querySelector("#squares_submit").addEventListener('click', e => {
+
+})
+
+document.querySelector("#multiples_submit").addEventListener('click', e => {
+
+})
+
+document.querySelector("#binary_submit").addEventListener('click', e => {
+
+})
+
+document.querySelector("#palindrom_submit").addEventListener('click', e => {
+
+})
+
+document.querySelector("#prime_submit").addEventListener('click', e => {
+
+})
+
+document.querySelector("#search_submit").addEventListener('click', e => {
+
+})
+
 
 function sendRequest(route, data){
   var xhttp = new XMLHttpRequest();
