@@ -68,7 +68,23 @@ func CalculateLivedMoment(res http.ResponseWriter, req *http.Request){
 }
 
 func SumOfSquares(res http.ResponseWriter, req *http.Request){
+  type reqStruct struct { Num string `json: num`}
+  var data reqStruct
+  GetBodyData(req, &data)
 
+  N, convErr := strconv.Atoi(data.Num)
+  CheckError(convErr)
+
+  sum := 0
+  squares := 0
+
+  for i := 1; i<=N; i++ {
+    sum += i
+    squares += (i * i)
+  }
+
+  diff := Abs(squares - (sum * sum))
+  fmt.Fprintf(res, strconv.Itoa(diff))
 }
 
 func SumOfMultiples(res http.ResponseWriter, req *http.Request){
@@ -105,5 +121,13 @@ func CheckError(err error) {
 func GetBodyData(req *http.Request, class interface{}) {
   err := json.NewDecoder(req.Body).Decode(&class)
 	CheckError(err)
+}
+
+func Abs(num int) int{
+  if num > 0 {
+    return num
+  } else {
+    return -num
+  }
 }
 /*#####################################################*/

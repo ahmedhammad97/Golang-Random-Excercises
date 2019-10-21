@@ -32,7 +32,10 @@ document.querySelector("#lived_submit").addEventListener('click', e => {
 })
 
 document.querySelector("#squares_submit").addEventListener('click', e => {
-
+  var num = document.querySelector(".squares_div input").value;
+  sendRequest("/squares", {"num" : num}).then(result => {
+    document.querySelector(".squares_div .result").innerText = result;
+  }).catch(err => {console.log(err)});
 })
 
 document.querySelector("#multiples_submit").addEventListener('click', e => {
