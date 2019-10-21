@@ -109,7 +109,21 @@ func SumOfMultiples(res http.ResponseWriter, req *http.Request){
 }
 
 func ConvertToBinary(res http.ResponseWriter, req *http.Request){
+  type reqStruct struct { Num string `json: num`}
+  var data reqStruct
+  GetBodyData(req, &data)
 
+  binaryStr := data.Num
+  sum := 0.0
+  length := len(binaryStr)
+
+  for i := length -1; i>=0; i-- {
+    if binaryStr[i] == 49 {
+      sum += math.Pow(2, float64(length -i -1))
+    }
+  }
+
+  fmt.Fprintf(res, strconv.Itoa(int(sum)))
 }
 
 func CheckPalindrom(res http.ResponseWriter, req *http.Request){

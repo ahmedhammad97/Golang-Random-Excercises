@@ -46,7 +46,10 @@ document.querySelector("#multiples_submit").addEventListener('click', e => {
 })
 
 document.querySelector("#binary_submit").addEventListener('click', e => {
-
+  var num = document.querySelector(".binary_div input").value;
+  sendRequest("/binary", {"num" : num}).then(result => {
+    document.querySelector(".binary_div .result").innerText = result;
+  }).catch(err => {console.log(err)});
 })
 
 document.querySelector("#palindrom_submit").addEventListener('click', e => {
