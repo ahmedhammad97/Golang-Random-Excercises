@@ -60,7 +60,10 @@ document.querySelector("#palindrom_submit").addEventListener('click', e => {
 })
 
 document.querySelector("#prime_submit").addEventListener('click', e => {
-
+  var num = document.querySelector(".prime_div input").value;
+  sendRequest("/prime", {"num" : num}).then(result => {
+    document.querySelector(".prime_div .result").innerText = result;
+  }).catch(err => {console.log(err)});
 })
 
 document.querySelector("#search_submit").addEventListener('click', e => {

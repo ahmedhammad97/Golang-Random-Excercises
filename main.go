@@ -144,7 +144,33 @@ func CheckPalindrom(res http.ResponseWriter, req *http.Request){
 }
 
 func PrimeFactors(res http.ResponseWriter, req *http.Request){
+  type reqStruct struct { Num string `json: num`}
+  var data reqStruct
+  GetBodyData(req, &data)
 
+  num, convErr1 := strconv.Atoi(data.Num)
+  CheckError(convErr1)
+  result := make([]int, 0)
+
+  for num%2 == 0 {
+		result = append(result, 2)
+		num = num / 2
+	}
+
+	for i := 3; i*i <= num; i = i + 2 {
+		for num%i == 0 {
+			result = append(result, i)
+			num = num / i
+		}
+	}
+
+	if num > 2 {
+		result = append(result, num)
+	}
+
+  jsonArr, err := json.Marshal(result)
+  CheckError(err)
+  fmt.Fprintf(res, string(jsonArr))
 }
 
 func BinarySearch(res http.ResponseWriter, req *http.Request){
