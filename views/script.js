@@ -53,7 +53,10 @@ document.querySelector("#binary_submit").addEventListener('click', e => {
 })
 
 document.querySelector("#palindrom_submit").addEventListener('click', e => {
-
+  var str = document.querySelector(".palindrom_div input").value;
+  sendRequest("/palindrom", {"str" : str}).then(result => {
+    document.querySelector(".palindrom_div .result").innerText = result;
+  }).catch(err => {console.log(err)});
 })
 
 document.querySelector("#prime_submit").addEventListener('click', e => {

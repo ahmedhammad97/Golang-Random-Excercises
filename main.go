@@ -127,7 +127,20 @@ func ConvertToBinary(res http.ResponseWriter, req *http.Request){
 }
 
 func CheckPalindrom(res http.ResponseWriter, req *http.Request){
+  type reqStruct struct { Str string `json: str`}
+  var data reqStruct
+  GetBodyData(req, &data)
 
+  str := data.Str
+  length := len(str)
+
+  for i := length -1; i>=length/2; i-- {
+    if str[i] != str[length -i -1] {
+      fmt.Fprintf(res, "Not a palindrom")
+      return
+    }
+  }
+  fmt.Fprintf(res, "Palindrom")
 }
 
 func PrimeFactors(res http.ResponseWriter, req *http.Request){
