@@ -39,7 +39,10 @@ document.querySelector("#squares_submit").addEventListener('click', e => {
 })
 
 document.querySelector("#multiples_submit").addEventListener('click', e => {
-
+  var nums = document.querySelectorAll(".multiples_div input");
+  sendRequest("/multiples", {"num" : nums[0].value, "N" : nums[1].value}).then(result => {
+    document.querySelector(".multiples_div .result").innerText = result;
+  }).catch(err => {console.log(err)});
 })
 
 document.querySelector("#binary_submit").addEventListener('click', e => {

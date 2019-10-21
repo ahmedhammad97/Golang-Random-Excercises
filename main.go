@@ -88,7 +88,24 @@ func SumOfSquares(res http.ResponseWriter, req *http.Request){
 }
 
 func SumOfMultiples(res http.ResponseWriter, req *http.Request){
+  type reqStruct struct {
+    Num string `json: num`
+    N string `json N`
+  }
+  var data reqStruct
+  GetBodyData(req, &data)
 
+  num, convErr1 := strconv.Atoi(data.Num)
+  CheckError(convErr1)
+  N, convErr2 := strconv.Atoi(data.N)
+  CheckError(convErr2)
+
+  sum := 0
+  for i := 1; i<N; i++ {
+    sum += i * num
+  }
+
+  fmt.Fprintf(res, strconv.Itoa(sum))
 }
 
 func ConvertToBinary(res http.ResponseWriter, req *http.Request){
