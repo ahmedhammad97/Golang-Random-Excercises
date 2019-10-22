@@ -67,7 +67,11 @@ document.querySelector("#prime_submit").addEventListener('click', e => {
 })
 
 document.querySelector("#search_submit").addEventListener('click', e => {
-
+  var nums = document.querySelectorAll(".search_div input");
+  let arr = nums[0].value.split(' ').filter(num => {return num !== ''})
+  sendRequest("/search", {"num" : nums[1].value, "arr" : arr}).then(result => {
+    document.querySelector(".search_div .result").innerText = result;
+  }).catch(err => {console.log(err)});
 })
 
 

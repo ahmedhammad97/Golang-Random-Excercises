@@ -27,6 +27,7 @@ func main() {
 }
 
 
+
 // Handlers
 /*#####################################################*/
 func CheckLeap (res http.ResponseWriter, req *http.Request) {
@@ -51,6 +52,7 @@ func CheckLeap (res http.ResponseWriter, req *http.Request) {
   fmt.Fprintf(res, result)
 }
 
+
 func CalculateLivedMoment(res http.ResponseWriter, req *http.Request){
   type reqStruct struct { Time string `json: time`}
   var data reqStruct
@@ -66,6 +68,7 @@ func CalculateLivedMoment(res http.ResponseWriter, req *http.Request){
 
   fmt.Fprintf(res, t.String())
 }
+
 
 func SumOfSquares(res http.ResponseWriter, req *http.Request){
   type reqStruct struct { Num string `json: num`}
@@ -86,6 +89,7 @@ func SumOfSquares(res http.ResponseWriter, req *http.Request){
   diff := Abs(squares - (sum * sum))
   fmt.Fprintf(res, strconv.Itoa(diff))
 }
+
 
 func SumOfMultiples(res http.ResponseWriter, req *http.Request){
   type reqStruct struct {
@@ -108,6 +112,7 @@ func SumOfMultiples(res http.ResponseWriter, req *http.Request){
   fmt.Fprintf(res, strconv.Itoa(sum))
 }
 
+
 func ConvertToBinary(res http.ResponseWriter, req *http.Request){
   type reqStruct struct { Num string `json: num`}
   var data reqStruct
@@ -126,6 +131,7 @@ func ConvertToBinary(res http.ResponseWriter, req *http.Request){
   fmt.Fprintf(res, strconv.Itoa(int(sum)))
 }
 
+
 func CheckPalindrom(res http.ResponseWriter, req *http.Request){
   type reqStruct struct { Str string `json: str`}
   var data reqStruct
@@ -142,6 +148,7 @@ func CheckPalindrom(res http.ResponseWriter, req *http.Request){
   }
   fmt.Fprintf(res, "Palindrom")
 }
+
 
 func PrimeFactors(res http.ResponseWriter, req *http.Request){
   type reqStruct struct { Num string `json: num`}
@@ -173,11 +180,42 @@ func PrimeFactors(res http.ResponseWriter, req *http.Request){
   fmt.Fprintf(res, string(jsonArr))
 }
 
+
 func BinarySearch(res http.ResponseWriter, req *http.Request){
+  type reqStruct struct {
+    Num string `json: num`
+    Arr []string `json: arr`
+  }
+  var data reqStruct
+  GetBodyData(req, &data)
 
+  arr := FixArray(data.Arr)
+
+  num, convErr1 := strconv.Atoi(data.Num)
+  CheckError(convErr1)
+
+  start_index := 0
+	end_index := len(arr) - 1
+
+	for start_index <= end_index {
+
+		median := start_index + (end_index - start_index) / 2
+    
+    if arr[median] == num {
+      fmt.Fprintf(res, "Found")
+      return
+    } else if arr[median] < num {
+			start_index = median + 1
+		} else {
+			end_index = median - 1
+		}
+
+	}
+
+	fmt.Fprintf(res, "Not found")
 }
-
 /*#####################################################*/
+
 
 
 // Helper Functions
@@ -199,5 +237,17 @@ func Abs(num int) int{
   } else {
     return -num
   }
+}
+
+func FixArray(arr []string) []int {
+  result := make([]int, 0)
+
+  for i := 0; i < len(arr); i++ {
+    num, err := strconv.Atoi(string(arr[i]))
+    CheckError(err)
+		result = append(result, num)
+	}
+
+  return result
 }
 /*#####################################################*/
