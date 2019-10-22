@@ -4,6 +4,11 @@ body{
   font-family: monospace;
 }
 
+a{
+  text-decoration: none;
+  color: lightgrey;
+}
+
 #back, .question_div{
   display: none;
 }
@@ -43,4 +48,16 @@ input, button{
   font-size: 30px;
   font-weight: bold;
   margin-top: 20px;
+}
+
+footer{
+  position: fixed;
+  bottom: 0;
+  background-color: #2b2b2b;
+  color: lightgrey;
+  padding: 5px;
+  margin-left: -10px;
+  font-size: 20px;
+  width: 100%;
+  font-weight: bold;
 }
