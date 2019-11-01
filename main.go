@@ -1,165 +1,170 @@
 package main
 
 import (
-  "fmt"
-  "net/http"
-  "encoding/json"
-  "strconv"
-  "time"
-  "math"
+	"encoding/json"
+	"fmt"
+	"math"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 func main() {
-  http.Handle("/", http.FileServer(http.Dir("views")))
+	http.Handle("/", http.FileServer(http.Dir("views")))
 
-  // Routes
-  http.HandleFunc("/leap", CheckLeap)
-  http.HandleFunc("/lived", CalculateLivedMoment)
-  http.HandleFunc("/squares", SumOfSquares)
-  http.HandleFunc("/multiples", SumOfMultiples)
-  http.HandleFunc("/binary", ConvertToBinary)
-  http.HandleFunc("/palindrom", CheckPalindrom)
-  http.HandleFunc("/prime", PrimeFactors)
-  http.HandleFunc("/search", BinarySearch)
+	// Routes
+	http.HandleFunc("/leap", CheckLeap)
+	http.HandleFunc("/lived", CalculateLivedMoment)
+	http.HandleFunc("/squares", SumOfSquares)
+	http.HandleFunc("/multiples", SumOfMultiples)
+	http.HandleFunc("/binary", ConvertToBinary)
+	http.HandleFunc("/palindrom", CheckPalindrom)
+	http.HandleFunc("/prime", PrimeFactors)
+	http.HandleFunc("/search", BinarySearch)
 
-  fmt.Println("Listening to port 9797...")
-  http.ListenAndServe(":9797", nil)
+	fmt.Println("Listening to port 9797...")
+	http.ListenAndServe(":9797", nil)
 }
-
-
 
 // Handlers
 /*#####################################################*/
-func CheckLeap (res http.ResponseWriter, req *http.Request) {
-  type reqStruct struct { Year string `json: year`}
-  var data reqStruct
-  GetBodyData(req, &data)
 
-  year, convErr := strconv.Atoi(data.Year)
-  CheckError(convErr)
-  result := "Not a leap year"
+func CheckLeap(res http.ResponseWriter, req *http.Request) {
+	type reqStruct struct {
+		Year string `json:"year"`
+	}
+	var data reqStruct
+	GetBodyData(req, &data)
 
-  if year % 4 == 0 {
-    if year % 100 != 0 {
-      result = "Leap year"
-    } else {
-      if year % 400 == 0 {
-        result = "Leap year"
-      }
-    }
-  }
+	year, convErr := strconv.Atoi(data.Year)
+	CheckError(convErr)
+	result := "Not a leap year"
 
-  fmt.Fprintf(res, result)
+	if year%4 == 0 {
+		if year%100 != 0 {
+			result = "Leap year"
+		} else {
+			if year%400 == 0 {
+				result = "Leap year"
+			}
+		}
+	}
+
+	fmt.Fprintf(res, result)
 }
 
+func CalculateLivedMoment(res http.ResponseWriter, req *http.Request) {
+	type reqStruct struct {
+		Time string `json:"time"`
+	}
+	var data reqStruct
+	GetBodyData(req, &data)
 
-func CalculateLivedMoment(res http.ResponseWriter, req *http.Request){
-  type reqStruct struct { Time string `json: time`}
-  var data reqStruct
-  GetBodyData(req, &data)
-
-  t, err := time.Parse(time.RFC3339, data.Time)
-  CheckError(err)
+	t, err := time.Parse(time.RFC3339, data.Time)
+	CheckError(err)
 
 	tEpoch := float64(t.Unix())
 	gigaSecond := math.Pow(10.0, 9)
 	tPlusGiga := tEpoch + gigaSecond
 	t = time.Unix(int64(tPlusGiga), 0)
 
-  fmt.Fprintf(res, t.String())
+	fmt.Fprintf(res, t.String())
 }
 
+func SumOfSquares(res http.ResponseWriter, req *http.Request) {
+	type reqStruct struct {
+		Num string `json:"num"`
+	}
+	var data reqStruct
+	GetBodyData(req, &data)
 
-func SumOfSquares(res http.ResponseWriter, req *http.Request){
-  type reqStruct struct { Num string `json: num`}
-  var data reqStruct
-  GetBodyData(req, &data)
+	N, convErr := strconv.Atoi(data.Num)
+	CheckError(convErr)
 
-  N, convErr := strconv.Atoi(data.Num)
-  CheckError(convErr)
+	sum := 0
+	squares := 0
 
-  sum := 0
-  squares := 0
+	for i := 1; i <= N; i++ {
+		sum += i
+		squares += (i * i)
+	}
 
-  for i := 1; i<=N; i++ {
-    sum += i
-    squares += (i * i)
-  }
-
-  diff := Abs(squares - (sum * sum))
-  fmt.Fprintf(res, strconv.Itoa(diff))
+	diff := Abs(squares - (sum * sum))
+	fmt.Fprintf(res, strconv.Itoa(diff))
 }
 
+func SumOfMultiples(res http.ResponseWriter, req *http.Request) {
+	type reqStruct struct {
+		Num string `json:"num"`
+		N   string `json:"N"`
+	}
+	var data reqStruct
+	GetBodyData(req, &data)
 
-func SumOfMultiples(res http.ResponseWriter, req *http.Request){
-  type reqStruct struct {
-    Num string `json: num`
-    N string `json N`
-  }
-  var data reqStruct
-  GetBodyData(req, &data)
+	num, convErr1 := strconv.Atoi(data.Num)
+	CheckError(convErr1)
+	N, convErr2 := strconv.Atoi(data.N)
+	CheckError(convErr2)
 
-  num, convErr1 := strconv.Atoi(data.Num)
-  CheckError(convErr1)
-  N, convErr2 := strconv.Atoi(data.N)
-  CheckError(convErr2)
+	sum := 0
+	for i := 1; i < N; i++ {
+		sum += i * num
+	}
 
-  sum := 0
-  for i := 1; i<N; i++ {
-    sum += i * num
-  }
-
-  fmt.Fprintf(res, strconv.Itoa(sum))
+	fmt.Fprintf(res, strconv.Itoa(sum))
 }
 
+func ConvertToBinary(res http.ResponseWriter, req *http.Request) {
+	type reqStruct struct {
+		Num string `json:"num"`
+	}
+	var data reqStruct
+	GetBodyData(req, &data)
 
-func ConvertToBinary(res http.ResponseWriter, req *http.Request){
-  type reqStruct struct { Num string `json: num`}
-  var data reqStruct
-  GetBodyData(req, &data)
+	binaryStr := data.Num
+	sum := 0.0
+	length := len(binaryStr)
 
-  binaryStr := data.Num
-  sum := 0.0
-  length := len(binaryStr)
+	for i := length - 1; i >= 0; i-- {
+		if binaryStr[i] == 49 {
+			sum += math.Pow(2, float64(length-i-1))
+		}
+	}
 
-  for i := length -1; i>=0; i-- {
-    if binaryStr[i] == 49 {
-      sum += math.Pow(2, float64(length -i -1))
-    }
-  }
-
-  fmt.Fprintf(res, strconv.Itoa(int(sum)))
+	fmt.Fprintf(res, strconv.Itoa(int(sum)))
 }
 
+func CheckPalindrom(res http.ResponseWriter, req *http.Request) {
+	type reqStruct struct {
+		Str string `json:"str"`
+	}
+	var data reqStruct
+	GetBodyData(req, &data)
 
-func CheckPalindrom(res http.ResponseWriter, req *http.Request){
-  type reqStruct struct { Str string `json: str`}
-  var data reqStruct
-  GetBodyData(req, &data)
+	str := data.Str
+	length := len(str)
 
-  str := data.Str
-  length := len(str)
-
-  for i := length -1; i>=length/2; i-- {
-    if str[i] != str[length -i -1] {
-      fmt.Fprintf(res, "Not a palindrom")
-      return
-    }
-  }
-  fmt.Fprintf(res, "Palindrom")
+	for i := length - 1; i >= length/2; i-- {
+		if str[i] != str[length-i-1] {
+			fmt.Fprintf(res, "Not a palindrom")
+			return
+		}
+	}
+	fmt.Fprintf(res, "Palindrom")
 }
 
+func PrimeFactors(res http.ResponseWriter, req *http.Request) {
+	type reqStruct struct {
+		Num string `json:"num"`
+	}
+	var data reqStruct
+	GetBodyData(req, &data)
 
-func PrimeFactors(res http.ResponseWriter, req *http.Request){
-  type reqStruct struct { Num string `json: num`}
-  var data reqStruct
-  GetBodyData(req, &data)
+	num, convErr1 := strconv.Atoi(data.Num)
+	CheckError(convErr1)
+	result := make([]int, 0)
 
-  num, convErr1 := strconv.Atoi(data.Num)
-  CheckError(convErr1)
-  result := make([]int, 0)
-
-  for num%2 == 0 {
+	for num%2 == 0 {
 		result = append(result, 2)
 		num = num / 2
 	}
@@ -175,79 +180,79 @@ func PrimeFactors(res http.ResponseWriter, req *http.Request){
 		result = append(result, num)
 	}
 
-  jsonArr, err := json.Marshal(result)
-  CheckError(err)
-  fmt.Fprintf(res, string(jsonArr))
+	jsonArr, err := json.Marshal(result)
+	CheckError(err)
+	fmt.Fprintf(res, string(jsonArr))
 }
 
+func BinarySearch(res http.ResponseWriter, req *http.Request) {
+	type reqStruct struct {
+		Num string   `json:"num"`
+		Arr []string `json:"arr"`
+	}
+	var data reqStruct
+	GetBodyData(req, &data)
 
-func BinarySearch(res http.ResponseWriter, req *http.Request){
-  type reqStruct struct {
-    Num string `json: num`
-    Arr []string `json: arr`
-  }
-  var data reqStruct
-  GetBodyData(req, &data)
+	arr := FixArray(data.Arr)
 
-  arr := FixArray(data.Arr)
+	num, convErr1 := strconv.Atoi(data.Num)
+	CheckError(convErr1)
 
-  num, convErr1 := strconv.Atoi(data.Num)
-  CheckError(convErr1)
+	startIndex := 0
+	endIndex := len(arr) - 1
 
-  start_index := 0
-	end_index := len(arr) - 1
+	for startIndex <= endIndex {
 
-	for start_index <= end_index {
+		median := startIndex + (endIndex-startIndex)/2
 
-		median := start_index + (end_index - start_index) / 2
-    
-    if arr[median] == num {
-      fmt.Fprintf(res, "Found")
-      return
-    } else if arr[median] < num {
-			start_index = median + 1
+		if arr[median] == num {
+			fmt.Fprintf(res, "Found")
+			return
+		} else if arr[median] < num {
+			startIndex = median + 1
 		} else {
-			end_index = median - 1
+			endIndex = median - 1
 		}
 
 	}
 
 	fmt.Fprintf(res, "Not found")
 }
+
 /*#####################################################*/
-
-
 
 // Helper Functions
 /*#####################################################*/
+
 func CheckError(err error) {
-  if err != nil {
+	if err != nil {
 		panic(err)
 	}
 }
 
 func GetBodyData(req *http.Request, class interface{}) {
-  err := json.NewDecoder(req.Body).Decode(&class)
+	err := json.NewDecoder(req.Body).Decode(&class)
 	CheckError(err)
 }
 
-func Abs(num int) int{
-  if num > 0 {
-    return num
-  } else {
-    return -num
-  }
+func Abs(num int) int {
+	if num > 0 {
+		return num
+	} else {
+		return -num
+	}
 }
 
 func FixArray(arr []string) []int {
-  result := make([]int, 0)
+	result := make([]int, 0)
 
-  for i := 0; i < len(arr); i++ {
-    num, err := strconv.Atoi(string(arr[i]))
-    CheckError(err)
+	for i := 0; i < len(arr); i++ {
+		num, err := strconv.Atoi(string(arr[i]))
+		CheckError(err)
 		result = append(result, num)
 	}
 
-  return result
+	return result
 }
+
 /*#####################################################*/
